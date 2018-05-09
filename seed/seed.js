@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { Users, Articles, Comments, Topics } = require('../models');
-const { formatArticleData } = require('../utils');
+const { formatArticleData, formatComments } = require('../utils');
 
 const topicData = require('./devData/topics');
 const userData = require('./devData/users');
@@ -21,7 +21,14 @@ const seedDB = (topicData, userData, articleData, commentData) => {
         topicDocs,
         userDocs,
         Articles.insertMany(formatArticleData(articleData, topicDocs, userDocs))
-      ]);
+      ]).then(([topicDocs, userDocs, articleDocs]) => {
+        return Promise.all([
+          topicDocs,
+          userDocs,
+          articleDocs,
+          Comments.insertMany(formatComments(articleDocs, userDocs))
+        ]);
+      });
     })
     .catch(console.log);
 };

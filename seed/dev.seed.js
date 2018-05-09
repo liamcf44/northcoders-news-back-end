@@ -8,10 +8,14 @@ const articleData = require('./devData/articles');
 mongoose
   .connect('mongodb://localhost:27017/northcoders_news')
   .then(() => seedDb(topicData, userData, articleData))
-  .then(([topicDocs, userDocs, articleDocs]) => {
+  .then(([topicDocs, userDocs, articleDocs, commentDocs]) => {
     console.log(`📖 ${topicDocs.length} Topic inserted 📖`);
     console.log(`👦 ${userDocs.length} Users inserted 👧`);
-    console.log(`📒 ${articleDocs.length} Articles inserted 📒`);
+    console.log(
+      `📒 ${articleDocs.length} Articles inserted with ${
+        commentDocs.length
+      } comments 📒`
+    );
   })
   .then(() => mongoose.disconnect())
   .catch(console.log);
