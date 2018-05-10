@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>API Listing</title>
+</head>
+
+<body>
+    <h1>List of API Endpoints</h1>
+    <br>
+    <h3>Topics</h3>
+    <p>A GET request to
+        <b>/api/topics</b> will list all topics</p>
+    <p>A GET request to
+        <b>/api/topics/:topic_id/articles</b> will list all articles associated to that topic_id</p>
+    <p>A POST request to
+        <b>/api/topics/:topic_id/articles</b> will add a new article to a topic</p>
+    <br>
+    <h3>Articles</h3>
+    <p>A GET request to
+        <b>/api/articles</b> will list all articles</p>
+    <p>A GET request to
+        <b>/api/articles/:article_id</b> will list the article associated with that article_id</p>
+    <p>A PUT request with a query of
+        <b>?vote=</b> to
+        <b>/api/articles/:article_id</b> will add one vote to the article if the query is ?vote=up or will remove one vote if
+        the query is ?vote=down, otherwise the votes will stay the same</p>
+    <p>A GET request to
+        <b>/api/articles/:article_id/comments</b> will list all the comments associated with that article_id</p>
+    <p>A POST request to
+        <b>/api/articles/:article_id/comments</b> will post a comment on the article associted with that article_id</p>
+    <br>
+    <h3>Comments</h3>
+    <p>A PUT request with a query of
+        <b>?vote=</b> to
+        <b>/api/comments/:comment_id</b> will add one vote to the comment if the query is ?vote=up or will remove one vote if
+        the query is ?vote=down, otherwise the votes will stay the same</p>
+    <p>A DELETE request to
+        <b>/api/comments/:comment_id</b> will delete the comment associted to that comment_id if it is valid</p>
+    <br>
+    <h3>Users</h3>
+    <p>A GET request to
+        <b>/api/users/:user_id</b> will return the user associated with that user_id</p>
+</body>
+
+</html>
