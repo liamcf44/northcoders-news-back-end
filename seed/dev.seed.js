@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const { topicData, userData, articleData } = require('./devData');
 const { createComments } = require('../utils');
 
-let commentData = createComments();
+let commentData = createComments(userData, articleData);
 
 mongoose
   .connect('mongodb://localhost:27017/northcoders_news')

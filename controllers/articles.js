@@ -34,3 +34,37 @@ exports.addCommentToArticle = (req, res, next) => {
       next({ status: 400 });
     });
 };
+
+exports.voteOnArticle = (req, res, next) => {
+  const { article_id } = req.params;
+  const { vote } = req.query;
+  if (vote === 'up') {
+    return Articles.findByIdAndUpdate(
+      { _id: article_id },
+      { $inc: { votes: 1 } },
+      { new: true }
+    ).then(result => {
+      res.status(200).send({ result });
+    });
+  } else if (vote === 'down')
+    return Articles.findByIdAndUpdate(
+      { _id: article_id },
+      { $inc: { votes: -1 } },
+      { new: true }
+    ).then(result => {
+      res.status(200).send({ result });
+    });
+  else
+    Articles.findByIdAndUpdate(
+      { _id: article_id },
+      { $inc: { votes: 0 } },
+      { new: true }
+    )
+      .then(result => {
+        res.status(200).send({ result });
+      })
+      .catch(err => {
+        console.log(err);
+        next({ status: 400 });
+      });
+};

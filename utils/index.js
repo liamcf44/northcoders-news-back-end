@@ -17,14 +17,14 @@ exports.formatArticleData = (articleData, topicDocs, userDocs) => {
   });
 };
 
-exports.createComments = () => {
+exports.createComments = (userData, articleData) => {
   return Array.from({ length: Math.floor(Math.random() * 100 + 1) }, () => {
     return {
       body: faker.lorem.paragraph(),
-      belongs_to: '',
+      belongs_to: _.sample(articleData).title,
       created_at: new Date().getTime(),
       votes: Math.floor(Math.random() * 100 + 1),
-      created_by: ''
+      created_by: _.sample(userData).username
     };
   });
 };
@@ -33,10 +33,17 @@ exports.formatComments = (commentData, articleDocs, userDocs) => {
   return commentData.map(comment => {
     return {
       body: comment.body,
-      belongs_to: _.sample(articleDocs)._id,
+      belongs_to: articleDocs.reduce((acc, article) => {
+        if (article.title === comment.belongs_to) acc = article._id;
+        return acc;
+      }, ''),
       created_at: comment.created_at,
       votes: comment.votes,
-      created_by: _.sample(userDocs)._id
+      created_by: userDocs.reduce((acc, user) => {
+        if (user.username.toLowerCase() === comment.created_by.toLowerCase())
+          acc = user._id;
+        return acc;
+      }, '')
     };
   });
 };

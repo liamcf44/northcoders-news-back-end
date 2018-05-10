@@ -138,6 +138,34 @@ describe('/api', () => {
             expect(body.message).to.equal('400: Bad Request');
           });
       });
+      it('PUT with a query of vote=up returns a 200 status and increases the article votes by 1', () => {
+        const [testArticle] = articleDocs;
+        return request
+          .put(`/api/articles/${testArticle._id}?vote=up`)
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.result._id).to.equal(`${testArticle._id}`);
+            expect(body.result.votes).to.equal(1);
+          });
+      });
+      it('PUT with a query of vote=down returns a 200 status and decreases the article votes by 1', () => {
+        const [testArticle] = articleDocs;
+        return request
+          .put(`/api/articles/${testArticle._id}?vote=down`)
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.result._id).to.equal(`${testArticle._id}`);
+            expect(body.result.votes).to.equal(-1);
+          });
+      });
+      it('Wrong PUT does not change the votecount', () => {
+        const [testArticle] = articleDocs;
+        return request
+          .get(`/api/articles/${testArticle._id}?vote=sideways`)
+          .then(({ body }) => {
+            expect(testArticle.votes).to.equal(0);
+          });
+      });
       describe('/articles/:article_id/comments', () => {
         it('GET returns a 200 status and the relevant comments by article ID', () => {
           const [testArticle] = articleDocs;
@@ -204,6 +232,55 @@ describe('/api', () => {
             });
         });
       });
+    });
+  });
+  describe('/comments/:comment_id', () => {
+    it('PUT with a query of vote=up returns a 200 status and increases the comment votes by 1', () => {
+      const [testComment] = commentDocs;
+      return request
+        .put(`/api/comments/${testComment._id}?vote=up`)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.result._id).to.equal(`${testComment._id}`);
+          expect(body.result.votes).to.equal(8);
+        });
+    });
+    it('PUT with a query of vote=down returns a 200 status and decreases the article votes by 1', () => {
+      const [testComment] = commentDocs;
+      return request
+        .put(`/api/comments/${testComment._id}?vote=down`)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.result._id).to.equal(`${testComment._id}`);
+          expect(body.result.votes).to.equal(6);
+        });
+    });
+    it('Wrong PUT does not change the votecount', () => {
+      const [testComment] = commentDocs;
+      return request
+        .get(`/api/comments/${testComment._id}?vote=sideways`)
+        .then(({ body }) => {
+          expect(testComment.votes).to.equal(7);
+        });
+    });
+    it('DELETE removes comment by id and returns a message', () => {
+      const [testComment] = commentDocs;
+      return request
+        .delete(`/api/comments/${testComment._id}`)
+        .then(({ body }) => {
+          expect(body.message).to.equal(
+            `Comment ${testComment._id} has been deleted`
+          );
+        });
+    });
+    it('Wrong DELETE returns a 400 status and an error message', () => {
+      const [testComment] = commentDocs;
+      return request
+        .delete(`/api/comments/${testComment._id}wrong`)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).to.equal('400: Bad Request');
+        });
     });
   });
 });
