@@ -9,7 +9,11 @@ exports.getArticles = (req, res, next) => {
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
   return Articles.find({ _id: article_id })
-    .then(result => res.status(200).send({ result }))
+    .then(result => {
+      return result.length === 0
+        ? next({ status: 404 })
+        : res.status(200).send({ result });
+    })
     .catch(err => {
       next({ status: 400 });
     });
@@ -18,7 +22,11 @@ exports.getArticleById = (req, res, next) => {
 exports.getCommentsByArticle = (req, res, next) => {
   const { article_id } = req.params;
   return Comments.find({ belongs_to: article_id })
-    .then(comments => res.status(200).send({ comments }))
+    .then(comments => {
+      return comments.length === 0
+        ? next({ status: 404 })
+        : res.status(200).send({ comments });
+    })
     .catch(err => {
       next({ status: 400 });
     });

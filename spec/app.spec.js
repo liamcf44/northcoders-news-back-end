@@ -23,10 +23,34 @@ describe('/api', () => {
   after(() => {
     return mongoose.disconnect();
   });
+  describe('Seed Database', () => {
+    it('The database should seed the topics correctly', () => {
+      expect(topicDocs.length).to.equal(2);
+      expect(topicDocs[0]).to.be.an('object');
+      expect(topicDocs[0].title).to.equal('Mitch');
+    });
+    it('The database should seed the users correctly', () => {
+      expect(userDocs.length).to.equal(2);
+      expect(userDocs[0]).to.be.an('object');
+      expect(userDocs[1].username).to.equal('dedekind561');
+    });
+    it('The database should seed the articles correctly', () => {
+      expect(articleDocs.length).to.equal(4);
+      expect(articleDocs[0]).to.be.an('object');
+      expect(articleDocs[2].title).to.equal(
+        "They're not exactly dogs, are they?"
+      );
+    });
+    it('The database should seed the comments correctly', () => {
+      expect(commentDocs.length).to.equal(8);
+      expect(commentDocs[4]).to.be.an('object');
+      expect(commentDocs[2].body).to.equal('The owls are not what they seem.');
+    });
+  });
   describe('/*', () => {
     it('GET on a non-existent route returns a 404 status and an error code', () => {
       return request
-        .get('/api/topicsregh')
+        .get('/api/topicswrongendpoint')
         .expect(404)
         .then(({ body }) => {
           expect(body.message).to.equal('404: Page not found');
@@ -41,6 +65,7 @@ describe('/api', () => {
         .then(({ body }) => {
           expect(body.topics[0].slug).to.equal('mitch');
           expect(body.topics[1].title).to.equal('Cats');
+          expect(body.topics.length).to.equal(2);
         });
     });
     describe('/topics/:topic_id/articles', () => {
@@ -50,13 +75,23 @@ describe('/api', () => {
           .get(`/api/topics/${testTopic._id}/articles`)
           .expect(200)
           .then(({ body }) => {
+            expect(body.result[0]).to.be.an('object');
             expect(body.result[0].title).to.equal(
               'Living in the shadow of a great man'
             );
             expect(body.result[1].belongs_to).to.equal(`${testTopic._id}`);
           });
       });
-      it('Wrong GET returns a 400 status and an error message', () => {
+      it('ERROR: GET with an valid database id but not a valid topic id returns a 404 status and an error message', () => {
+        const [incorrectTest] = userDocs;
+        return request
+          .get(`/api/topics/${incorrectTest._id}/articles`)
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.message).to.equal('404: Page not found');
+          });
+      });
+      it('ERROR: GET with an invalid Id / CastError returns a 400 status and an error message', () => {
         const [testTopic] = topicDocs;
         return request
           .get(`/api/topics/${testTopic._id}wrong/articles`)
@@ -85,7 +120,7 @@ describe('/api', () => {
             expect(body.newArticleDoc.created_by).to.equal(`${testUser._id}`);
           });
       });
-      it('Wrong POST returns a 400 status and an error message', () => {
+      it('ERROR: POST returns a 400 status and an error message', () => {
         const [testTopic] = topicDocs;
         const [testUser] = userDocs;
         let testArticle = {
@@ -129,10 +164,19 @@ describe('/api', () => {
             expect(body.result[0]._id).to.equal(`${testArticle._id}`);
           });
       });
-      it('Wrong GET returns a 400 status and an error message', () => {
+      it('ERROR: GET with an valid database id but not a valid article id returns a 404 status and an error message', () => {
+        const [incorrectTest] = userDocs;
+        return request
+          .get(`/api/articles/${incorrectTest._id}`)
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.message).to.equal('404: Page not found');
+          });
+      });
+      it('ERROR: GET with an invalid Id / CastError returns a 400 status and an error message', () => {
         const [testArticle] = articleDocs;
         return request
-          .get(`/api/articles/${testArticle._id}liam`)
+          .get(`/api/topics/${testArticle._id}wrong/articles`)
           .expect(400)
           .then(({ body }) => {
             expect(body.message).to.equal('400: Bad Request');
@@ -162,7 +206,7 @@ describe('/api', () => {
             expect(body.result.votes).to.equal(-1);
           });
       });
-      it('Wrong PUT does not change the votecount', () => {
+      it('PUT with anything other than up or down does not change the votecount', () => {
         const [testArticle] = articleDocs;
         return request
           .get(`/api/articles/${testArticle._id}?vote=sideways`)
@@ -183,7 +227,16 @@ describe('/api', () => {
               );
             });
         });
-        it('Wrong GET returns a 400 status and an error message', () => {
+        it('ERROR: GET with an valid database id but not a valid article id returns a 404 status and an error message', () => {
+          const [incorrectTest] = userDocs;
+          return request
+            .get(`/api/articles/${incorrectTest._id}/comments`)
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.message).to.equal('404: Page not found');
+            });
+        });
+        it('ERROR: GET with an invalid Id / CastError returns a 400 status and an error message', () => {
           const [testArticle] = articleDocs;
           return request
             .get(`/api/articles/${testArticle._id}wrong/comments`)
@@ -217,7 +270,7 @@ describe('/api', () => {
               );
             });
         });
-        it('Wrong POST returns a 400 status and an error message', () => {
+        it('ERROR: POST returns a 400 status and an error message', () => {
           const [testArticle] = articleDocs;
           const [testUser] = userDocs;
           let testComment = {
@@ -259,7 +312,7 @@ describe('/api', () => {
           expect(body.result.votes).to.equal(6);
         });
     });
-    it('Wrong PUT does not change the votecount', () => {
+    it('PUT with a query of anything other does not change the votecount', () => {
       const [testComment] = commentDocs;
       return request
         .get(`/api/comments/${testComment._id}?vote=sideways`)
@@ -277,13 +330,13 @@ describe('/api', () => {
           );
         });
     });
-    it('Wrong DELETE returns a 400 status and an error message', () => {
-      const [testComment] = commentDocs;
+    it('ERROR: DELETE with a valid Id but not a comment Id returns a 404 status and an error message', () => {
+      const [testComment] = userDocs;
       return request
-        .delete(`/api/comments/${testComment._id}wrong`)
-        .expect(400)
+        .delete(`/api/comments/${testComment._id}`)
+        .expect(404)
         .then(({ body }) => {
-          expect(body.message).to.equal('400: Bad Request');
+          expect(body.message).to.equal('404: Page not found');
         });
     });
   });
@@ -299,7 +352,16 @@ describe('/api', () => {
           expect(body.result[0].username).to.equal('butter_bridge');
         });
     });
-    it('Wrong GET returns a 400 error and an error message', () => {
+    it('ERROR:GET with an valid database id but not a valid article id returns a 404 status and an error message', () => {
+      const [incorrectTest] = topicDocs;
+      return request
+        .get(`/api/users/${incorrectTest._id}`)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.message).to.equal('404: Page not found');
+        });
+    });
+    it('ERROR: GET with an invalid Id / CastError returns a 400 status and an error message', () => {
       const [testUser] = userDocs;
       return request
         .get(`/api/users/${testUser._id}wrong`)
