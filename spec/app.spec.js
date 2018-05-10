@@ -146,6 +146,10 @@ describe('/api', () => {
           .then(({ body }) => {
             expect(body.result._id).to.equal(`${testArticle._id}`);
             expect(body.result.votes).to.equal(1);
+            return request.put(`/api/articles/${testArticle._id}?vote=up`);
+          })
+          .then(({ body }) => {
+            expect(body.result.votes).to.equal(2);
           });
       });
       it('PUT with a query of vote=down returns a 200 status and decreases the article votes by 1', () => {
@@ -277,6 +281,28 @@ describe('/api', () => {
       const [testComment] = commentDocs;
       return request
         .delete(`/api/comments/${testComment._id}wrong`)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).to.equal('400: Bad Request');
+        });
+    });
+  });
+  describe('/users/:user_id', () => {
+    it('GET returns a 200 status and the user details', () => {
+      const [testUser] = userDocs;
+      return request
+        .get(`/api/users/${testUser._id}`)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.result[0]._id).to.equal(`${testUser._id}`);
+          expect(body.result[0].name).to.equal('jonny');
+          expect(body.result[0].username).to.equal('butter_bridge');
+        });
+    });
+    it('Wrong GET returns a 400 error and an error message', () => {
+      const [testUser] = userDocs;
+      return request
+        .get(`/api/users/${testUser._id}wrong`)
         .expect(400)
         .then(({ body }) => {
           expect(body.message).to.equal('400: Bad Request');

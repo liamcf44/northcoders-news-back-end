@@ -64,7 +64,6 @@ exports.voteOnArticle = (req, res, next) => {
         res.status(200).send({ result });
       })
       .catch(err => {
-        console.log(err);
         next({ status: 400 });
       });
 };
