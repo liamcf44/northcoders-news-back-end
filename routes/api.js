@@ -4,8 +4,8 @@ const router = express.Router();
 const topicsRouter = require('./topics');
 router.use('/topics', topicsRouter);
 
-// const articlesRouter = require('./articles');
-// router.use('/articles', articlesRouter);
+const articlesRouter = require('./articles');
+router.use('/articles', articlesRouter);
 
 // const commentsRouter = require('./comments');
 // router.use('/comments', commentsRouter);

@@ -4,27 +4,33 @@ const { formatArticleData, formatComments } = require('../utils');
 
 const { topicData, userData, articleData } = require('./devData');
 
-const seedDB = (topicData, userData, articleData) => {
+const seedDB = (topicData, userData, articleData, commentData) => {
   return mongoose.connection
     .dropDatabase()
     .then(() => {
       return Promise.all([
         Topics.insertMany(topicData),
         Users.insertMany(userData),
-        articleData
+        articleData,
+        commentData
       ]);
     })
-    .then(([topicDocs, userDocs, articleData]) => {
+    .then(([topicDocs, userDocs, articleData, commentData]) => {
       return Promise.all([
         topicDocs,
         userDocs,
-        Articles.insertMany(formatArticleData(articleData, topicDocs, userDocs))
-      ]).then(([topicDocs, userDocs, articleDocs]) => {
+        Articles.insertMany(
+          formatArticleData(articleData, topicDocs, userDocs)
+        ),
+        commentData
+      ]).then(([topicDocs, userDocs, articleDocs, commentData]) => {
         return Promise.all([
           topicDocs,
           userDocs,
           articleDocs,
-          Comments.insertMany(formatComments(articleDocs, userDocs))
+          Comments.insertMany(
+            formatComments(commentData, articleDocs, userDocs)
+          )
         ]);
       });
     })

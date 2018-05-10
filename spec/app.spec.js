@@ -16,8 +16,8 @@ const {
 describe('/api', () => {
   let topicDocs, userDocs, articleDocs;
   beforeEach(() => {
-    return seedDB(topicData, userData, articleData).then(docs => {
-      [topicDocs, userDocs, articleDocs] = docs;
+    return seedDB(topicData, userData, articleData, commentData).then(docs => {
+      [topicDocs, userDocs, articleDocs, commentDocs] = docs;
     });
   });
   after(() => {
@@ -57,8 +57,9 @@ describe('/api', () => {
           });
       });
       it('Wrong GET returns a 400 status and an error message', () => {
+        const [testTopic] = topicDocs;
         return request
-          .get(`/api/topics/rdfgdfefedtth/articles`)
+          .get(`/api/topics/${testTopic._id}wrong/articles`)
           .expect(400)
           .then(({ body }) => {
             expect(body.message).to.equal('400: Bad Request');
@@ -100,6 +101,108 @@ describe('/api', () => {
           .then(({ body }) => {
             expect(body.message).to.equal('400: Bad Request');
           });
+      });
+    });
+  });
+  describe('/articles', () => {
+    it('GET returns a 200 status and all the articles', () => {
+      return request
+        .get('/api/articles')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles.length).to.equal(4);
+          expect(body.articles[3].title).to.equal(
+            'UNCOVERED: catspiracy to bring down democracy'
+          );
+        });
+    });
+    describe('/articles/:article_id', () => {
+      it('GET returns a 200 status and the relevant article', () => {
+        const [testArticle] = articleDocs;
+        return request
+          .get(`/api/articles/${testArticle._id}`)
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.result[0].body).to.equal(
+              'I find this existence challenging'
+            );
+            expect(body.result[0]._id).to.equal(`${testArticle._id}`);
+          });
+      });
+      it('Wrong GET returns a 400 status and an error message', () => {
+        const [testArticle] = articleDocs;
+        return request
+          .get(`/api/articles/${testArticle._id}liam`)
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.message).to.equal('400: Bad Request');
+          });
+      });
+      describe('/articles/:article_id/comments', () => {
+        it('GET returns a 200 status and the relevant comments by article ID', () => {
+          const [testArticle] = articleDocs;
+          return request
+            .get(`/api/articles/${testArticle._id}/comments`)
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.comments[0]).to.be.an('object');
+              expect(body.comments[0].belongs_to).to.equal(
+                `${testArticle._id}`
+              );
+            });
+        });
+        it('Wrong GET returns a 400 status and an error message', () => {
+          const [testArticle] = articleDocs;
+          return request
+            .get(`/api/articles/${testArticle._id}wrong/comments`)
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.message).to.equal('400: Bad Request');
+            });
+        });
+        it('POST returns a 201 status and the article posted', () => {
+          const [testArticle] = articleDocs;
+          const [testUser] = userDocs;
+          let testComment = {
+            body: 'This is a test comment',
+            belongs_to: `${testArticle._id}`,
+            created_at: 44444444444444,
+            votes: 44,
+            created_by: `${testUser._id}`
+          };
+          return request
+            .post(`/api/articles/${testArticle._id}/comments`)
+            .send(testComment)
+            .expect(201)
+            .then(({ body }) => {
+              expect(body.newCommentDoc).to.be.an('object');
+              expect(body.newCommentDoc.body).to.equal(
+                'This is a test comment'
+              );
+              expect(body.newCommentDoc.created_by).to.equal(`${testUser._id}`);
+              expect(body.newCommentDoc.belongs_to).to.equal(
+                `${testArticle._id}`
+              );
+            });
+        });
+        it('Wrong POST returns a 400 status and an error message', () => {
+          const [testArticle] = articleDocs;
+          const [testUser] = userDocs;
+          let testComment = {
+            body: 'This is a test comment',
+            belongs_to: `${testArticle._id}incorrect`,
+            created_at: 44444444444444,
+            votes: 44,
+            created_by: `${testUser._id}wrong`
+          };
+          return request
+            .post(`/api/articles/${testArticle._id}/comments`)
+            .send(testComment)
+            .expect(400)
+            .then(({ body }) => {
+              expect(body.message).to.equal('400: Bad Request');
+            });
+        });
       });
     });
   });

@@ -2,10 +2,13 @@ const seedDb = require('./seed');
 const mongoose = require('mongoose');
 
 const { topicData, userData, articleData } = require('./devData');
+const { createComments } = require('../utils');
+
+let commentData = createComments();
 
 mongoose
   .connect('mongodb://localhost:27017/northcoders_news')
-  .then(() => seedDb(topicData, userData, articleData))
+  .then(() => seedDb(topicData, userData, articleData, commentData))
   .then(([topicDocs, userDocs, articleDocs, commentDocs]) => {
     console.log(`📖 ${topicDocs.length} Topic inserted 📖`);
     console.log(`👦 ${userDocs.length} Users inserted 👧`);
