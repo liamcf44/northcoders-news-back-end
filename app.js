@@ -2,7 +2,7 @@ const app = require('express')();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
-const DB_URL = require('./config');
+const DB_URL = process.env.MONGO_URI || require('./config');
 
 mongoose
   .connect(DB_URL)

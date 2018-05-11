@@ -5,14 +5,16 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha spec",
-    "start": "nodemon listen.js",
-    "dev": "node seed/dev.seed.js"
+    "start": "node listen.js",
+    "seed:dev": "node seed/dev.seed.js",
+    "seed:prod": "NODE_ENV=production node seed/prod.seed.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
+    "heroku": "^7.0.37",
     "mongoose": "^5.0.14"
   },
   "devDependencies": {
