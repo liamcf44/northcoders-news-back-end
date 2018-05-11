@@ -28,7 +28,7 @@ Once you have set up a new Databse on mlab you can change the heroku config setu
 heroku config:set MONGO_URI=[mlab-url]
 ```
 
-This API can be found at the following link, `https://stormy-meadow-76642.herokuapp.com/` and it's git link is `https://git.heroku.com/stormy-meadow-76642.git`
+This API can be found at the following Heroku link, `https://stormy-meadow-76642.herokuapp.com/` and it's git link is `https://git.heroku.com/stormy-meadow-76642.git`
 
 ### TESTING
 
