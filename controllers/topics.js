@@ -9,8 +9,7 @@ exports.getTopics = (req, res, next) => {
 exports.getArticlesByTopic = (req, res, next) => {
   const { topic_id } = req.params;
   return Articles.find({ belongs_to: topic_id })
-    .populate('belongs_to', 'title')
-    .populate('created_by', 'username')
+    .populate('belongs_to created_by', 'title username')
     .then(result => {
       return result.length === 0
         ? next({ status: 404 })

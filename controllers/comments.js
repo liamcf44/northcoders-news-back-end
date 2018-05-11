@@ -9,8 +9,7 @@ exports.voteOnComment = (req, res, next) => {
       { $inc: { votes: 1 } },
       { new: true }
     )
-      .populate('belongs_to', 'title')
-      .populate('created_by', 'username')
+      .populate('belongs_to created_by', 'title username')
       .then(result => {
         res.status(200).send({ result });
       });
@@ -20,8 +19,7 @@ exports.voteOnComment = (req, res, next) => {
       { $inc: { votes: -1 } },
       { new: true }
     )
-      .populate('belongs_to', 'title')
-      .populate('created_by', 'username')
+      .populate('belongs_to created_by', 'title username')
       .then(result => {
         res.status(200).send({ result });
       });
@@ -31,8 +29,7 @@ exports.voteOnComment = (req, res, next) => {
       { $inc: { votes: 0 } },
       { new: true }
     )
-      .populate('belongs_to', 'title')
-      .populate('created_by', 'username')
+      .populate('belongs_to created_by', 'title username')
       .then(result => {
         res.status(200).send({ result });
       })

@@ -2,8 +2,7 @@ const { Articles, Comments } = require('../models');
 
 exports.getArticles = (req, res, next) => {
   return Articles.find()
-    .populate('belongs_to', 'title')
-    .populate('created_by', 'username')
+    .populate('belongs_to created_by', 'title username')
     .then(articles => res.status(200).send({ articles }))
     .catch(next);
 };
@@ -11,8 +10,7 @@ exports.getArticles = (req, res, next) => {
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
   return Articles.find({ _id: article_id })
-    .populate('belongs_to', 'title')
-    .populate('created_by', 'username')
+    .populate('belongs_to created_by', 'title username')
     .then(result => {
       return result.length === 0
         ? next({ status: 404 })
@@ -26,8 +24,7 @@ exports.getArticleById = (req, res, next) => {
 exports.getCommentsByArticle = (req, res, next) => {
   const { article_id } = req.params;
   return Comments.find({ belongs_to: article_id })
-    .populate('belongs_to', 'title')
-    .populate('created_by', 'username')
+    .populate('belongs_to created_by', 'title username')
     .then(comments => {
       return comments.length === 0
         ? next({ status: 404 })
@@ -58,8 +55,7 @@ exports.voteOnArticle = (req, res, next) => {
       { $inc: { votes: 1 } },
       { new: true }
     )
-      .populate('belongs_to', 'title')
-      .populate('created_by', 'username')
+      .populate('belongs_to created_by', 'title username')
       .then(result => {
         res.status(200).send({ result });
       });
@@ -69,8 +65,7 @@ exports.voteOnArticle = (req, res, next) => {
       { $inc: { votes: -1 } },
       { new: true }
     )
-      .populate('belongs_to', 'title')
-      .populate('created_by', 'username')
+      .populate('belongs_to created_by', 'title username')
       .then(result => {
         res.status(200).send({ result });
       });
@@ -80,8 +75,7 @@ exports.voteOnArticle = (req, res, next) => {
       { $inc: { votes: 0 } },
       { new: true }
     )
-      .populate('belongs_to', 'title')
-      .populate('created_by', 'username')
+      .populate('belongs_to created_by', 'title username')
       .then(result => {
         res.status(200).send({ result });
       })

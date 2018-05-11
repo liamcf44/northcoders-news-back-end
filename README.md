@@ -18,6 +18,18 @@ You will also need to install MongoDB, instructions for this can be found at `ht
 
 Running `npm install` will then install the dependencies needed. These are listed below.
 
+### SEEDING
+
+There are three databases for the API, the test database, the development database and the production database.
+
+The test database is seeded everytime you run `npm test`, instructions for testing are below.
+
+The development database can be seeded with the script `npm run seed:dev`.
+
+The production database can be seeded with the script `npm run seed:prod`.
+
+Once the database is seeded you can run the server using `npm listen`.
+
 ### HEROKU
 
 This API is hosted on Heroku using an MLab URI. You can do the same by setting up accounts at `mlab.com` and `heroku.com`.

@@ -361,7 +361,7 @@ describe('/api', () => {
           expect(body.message).to.equal('404: Page not found');
         });
     });
-    it('ERROR: GET with an invalid Id / CastError returns a 400 status and an error message', () => {
+    it('ERROR: GET with an invalid Id / CastError returns a 404 status and an error message', () => {
       const [testUser] = userDocs;
       return request
         .get(`/api/users/${testUser.username}wrong`)
