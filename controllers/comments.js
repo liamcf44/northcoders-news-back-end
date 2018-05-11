@@ -8,23 +8,31 @@ exports.voteOnComment = (req, res, next) => {
       { _id: comment_id },
       { $inc: { votes: 1 } },
       { new: true }
-    ).then(result => {
-      res.status(200).send({ result });
-    });
+    )
+      .populate('belongs_to', 'title')
+      .populate('created_by', 'username')
+      .then(result => {
+        res.status(200).send({ result });
+      });
   } else if (vote === 'down')
     return Comments.findByIdAndUpdate(
       { _id: comment_id },
       { $inc: { votes: -1 } },
       { new: true }
-    ).then(result => {
-      res.status(200).send({ result });
-    });
+    )
+      .populate('belongs_to', 'title')
+      .populate('created_by', 'username')
+      .then(result => {
+        res.status(200).send({ result });
+      });
   else
     Comments.findByIdAndUpdate(
       { _id: comment_id },
       { $inc: { votes: 0 } },
       { new: true }
     )
+      .populate('belongs_to', 'title')
+      .populate('created_by', 'username')
       .then(result => {
         res.status(200).send({ result });
       })

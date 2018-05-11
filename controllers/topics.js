@@ -9,6 +9,8 @@ exports.getTopics = (req, res, next) => {
 exports.getArticlesByTopic = (req, res, next) => {
   const { topic_id } = req.params;
   return Articles.find({ belongs_to: topic_id })
+    .populate('belongs_to', 'title')
+    .populate('created_by', 'username')
     .then(result => {
       return result.length === 0
         ? next({ status: 404 })
@@ -24,7 +26,9 @@ exports.addArticle = (req, res, next) => {
   const newArticle = new Articles(req.body);
   newArticle
     .save()
-    .then(newArticleDoc => res.status(201).send({ newArticleDoc }))
+    .then(newArticleDoc =>
+      res.status(201).send({ message: 'New article added', newArticleDoc })
+    )
     .catch(err => {
       next({ status: 400 });
     });

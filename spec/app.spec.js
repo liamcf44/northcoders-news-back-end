@@ -79,7 +79,7 @@ describe('/api', () => {
             expect(body.result[0].title).to.equal(
               'Living in the shadow of a great man'
             );
-            expect(body.result[1].belongs_to).to.equal(`${testTopic._id}`);
+            expect(body.result[1].belongs_to._id).to.equal(`${testTopic._id}`);
           });
       });
       it('ERROR: GET with an valid database id but not a valid topic id returns a 404 status and an error message', () => {
@@ -222,7 +222,7 @@ describe('/api', () => {
             .expect(200)
             .then(({ body }) => {
               expect(body.comments[0]).to.be.an('object');
-              expect(body.comments[0].belongs_to).to.equal(
+              expect(body.comments[0].belongs_to._id).to.equal(
                 `${testArticle._id}`
               );
             });

@@ -6,6 +6,7 @@
   "scripts": {
     "test": "mocha spec",
     "start": "node listen.js",
+    "begin": "nodemon listen.js",
     "seed:dev": "node seed/dev.seed.js",
     "seed:prod": "NODE_ENV=production node seed/prod.seed.js"
   },
