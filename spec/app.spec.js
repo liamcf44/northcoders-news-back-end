@@ -344,10 +344,10 @@ describe('/api', () => {
     it('GET returns a 200 status and the user details', () => {
       const [testUser] = userDocs;
       return request
-        .get(`/api/users/${testUser._id}`)
+        .get(`/api/users/${testUser.username}`)
         .expect(200)
         .then(({ body }) => {
-          expect(body.result[0]._id).to.equal(`${testUser._id}`);
+          expect(body.result[0].username).to.equal(`${testUser.username}`);
           expect(body.result[0].name).to.equal('jonny');
           expect(body.result[0].username).to.equal('butter_bridge');
         });
@@ -355,7 +355,7 @@ describe('/api', () => {
     it('ERROR:GET with an valid database id but not a valid article id returns a 404 status and an error message', () => {
       const [incorrectTest] = topicDocs;
       return request
-        .get(`/api/users/${incorrectTest._id}`)
+        .get(`/api/users/${incorrectTest.username}`)
         .expect(404)
         .then(({ body }) => {
           expect(body.message).to.equal('404: Page not found');
@@ -364,10 +364,10 @@ describe('/api', () => {
     it('ERROR: GET with an invalid Id / CastError returns a 400 status and an error message', () => {
       const [testUser] = userDocs;
       return request
-        .get(`/api/users/${testUser._id}wrong`)
-        .expect(400)
+        .get(`/api/users/${testUser.username}wrong`)
+        .expect(404)
         .then(({ body }) => {
-          expect(body.message).to.equal('400: Bad Request');
+          expect(body.message).to.equal('404: Page not found');
         });
     });
   });

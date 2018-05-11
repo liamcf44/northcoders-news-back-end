@@ -1,5 +1,5 @@
 const express = require('express');
-const router = express();
+const router = express.Router();
 
 const topicsRouter = require('./topics');
 router.use('/topics', topicsRouter);
@@ -12,11 +12,5 @@ router.use('/comments', commentsRouter);
 
 const usersRouter = require('./users');
 router.use('/users', usersRouter);
-
-router.set('view-engine', 'ejs');
-
-router.get('/', (req, res, next) => {
-  res.render('api.ejs');
-});
 
 module.exports = router;

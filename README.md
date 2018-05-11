@@ -12,9 +12,11 @@ Fork and clone the repository;
 
 `git clone https://github.com/:username/BE-FT-northcoders-news.git`
 
-Running `npm install` will install the dependencies needed.
+You need to install node, instructions for this can be found at `https://nodejs.org/en/download/package-manager/`.
 
-You will also need to install node with `npm install node`. The version used for this project is v9.9.0.
+You will also need to install MongoDB, instructions for this can be found at `https://docs.mongodb.com/manual/installation/`
+
+Running `npm install` will then install the dependencies needed. These are listed below.
 
 ### HEROKU
 
@@ -25,6 +27,8 @@ Once you have set up a new Databse on mlab you can change the heroku config setu
 ```
 heroku config:set MONGO_URI=[mlab-url]
 ```
+
+This API can be found at the following link, `https://stormy-meadow-76642.herokuapp.com/` and it's git link is `https://git.heroku.com/stormy-meadow-76642.git`
 
 ### TESTING
 
