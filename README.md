@@ -50,7 +50,7 @@ There is a test for the seedDB function, checking all the data has been added to
 
 The other tests are to check that each endpoint runs properly.
 
-These tests can be run with `npm test`.
+These tests can be run with heroku`npm test`.
 
 ### BUILT WITH
 
